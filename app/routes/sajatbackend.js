@@ -88,7 +88,7 @@ connection.query('SELECT * from mufaj ', function (err, rows, fields) {
 connection.end()
     
   })
-//-----------------------------------------------FILM LEKÉRDEZÉSE
+//-----------------------------------------------FILMMUFAJ LEKÉRDEZÉSE
   app.get('/filmmufaj', (req, res) => {
     var mysql = require('mysql')
     var connection = mysql.createConnection({
@@ -133,6 +133,30 @@ connection.query('SELECT * from komment WHERE komment.komment_sorozat_id ='+req.
 connection.end()
     
   })
+
+  app.post('/sorozatsajatadatok', (req, res) => {
+    var mysql = require('mysql')
+    var connection = mysql.createConnection({
+    host: 'localhost',
+    user: 'root',
+    password: '',
+    database: 'vizsgamunka'
+})
+
+connection.connect()
+
+connection.query('SELECT * from sorozat INNER JOIN mufaj ON sorozat.sorozat_mufaj=mufaj.mufaj_id  WHERE sorozat.sorozat_id ='+req.body.bevitel3, function (err, rows, fields) {
+  if (err) throw err
+
+  console.log(rows)
+  res.send(rows)
+})
+
+connection.end()
+    
+  })
+
+
 //-----------------------------------------------FILM KOMMENTEK LEKÉRDEZÉSE
   app.post('/filmkommentek', (req, res) => {
     var mysql = require('mysql')
@@ -298,28 +322,6 @@ connection.end()
   })
 
 
-//-----------------------------------------------ÉV SZERINTI SZŰRÉS (NEM HASZNÁLT JELENLEG)
-  app.post('/evszures', (req, res) => {
-    var mysql = require('mysql')
-    var connection = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: '',
-    database: 'vizsgamunka'
-  })
-  
-  connection.connect()
-  let sz='SELECT * from sorozat INNER JOIN mufaj ON sorozat.sorozat_mufaj=mufaj.mufaj_id WHERE sorozat.sorozat_ev LIKE "%'+req.body.bevitel1+'%"';
-    connection.query(sz, function (err, rows, fields) {
-  if (err) throw err
-  
-    console.log(rows)
-    res.send(rows)
-  })
-  
-  connection.end()
-  })
-
   //-----------------------------------------------FILMEK MŰFAJ SZERINTI SZŰRÉSE 
   app.post('/filmszures', (req, res) => {
     var mysql = require('mysql')
@@ -414,6 +416,29 @@ connection.query( "INSERT INTO ertekeles VALUES (NULL, '"+req.body.bevitel1+"','
 connection.end()
 
   })
+  app.post('/sorozatlink', (req, res) => {
+    var mysql = require('mysql')
+    var connection = mysql.createConnection({
+    host: 'localhost',
+    user: 'root',
+    password: '',
+    database: 'vizsgamunka'
+})
+
+connection.connect()
+
+
+connection.query( 'SELECT sorozat.sorozat_link FROM sorozat WHERE sorozat.sorozat_id = '+req.body.bevitel1 ,function (err, rows, fields) {
+    if (err) throw err
+
+    res.send(rows)
+    console.log(rows)
+})
+
+connection.end()
+
+  })
+
 
   //-----------------------------------------------FILMEK ÉRTÉKELÉSE
   app.post('/filmertekeles', (req, res) => {
@@ -533,29 +558,9 @@ connection.end()
   connection.end()
   })
 
-  app.get('/legujabbsorozat', (req, res) => {
-    var mysql = require('mysql')
-    var connection = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: '',
-    database: 'vizsgamunka'
-})
 
-connection.connect()
 
-connection.query('SELECT * from sorozat WHERE sorozat_ev = 2021 ORDER BY sorozat_ev DESC  ', function (err, rows, fields) {
-  if (err) throw err
-
-  console.log(rows)
-  res.send(rows)
-})
-
-connection.end()
-    
-  })
-
-  app.post('/torles', (req, res) => {
+  app.post('/sorozattorles', (req, res) => {
     var mysql = require('mysql')
     var connection = mysql.createConnection({
     host: 'localhost',
@@ -680,6 +685,51 @@ connection.end()
   connection.end()
   
   })
+
+  app.post('/filmkommenttorles', (req, res) => {
+    var mysql = require('mysql')
+    var connection = mysql.createConnection({
+    host: 'localhost',
+    user: 'root',
+    password: '',
+    database: 'vizsgamunka'
+  })
+  
+  connection.connect()
+  
+  connection.query('DELETE FROM film_komment where film_komment_id='+ req.body.bevitel1, function (err, rows, fields) {
+    if (err) throw err
+  
+    console.log(rows)
+    
+    res.send(rows)
+  })
+  
+  connection.end()
+  })
+
+  app.post('/sorozatkommenttorles', (req, res) => {
+    var mysql = require('mysql')
+    var connection = mysql.createConnection({
+    host: 'localhost',
+    user: 'root',
+    password: '',
+    database: 'vizsgamunka'
+  })
+  
+  connection.connect()
+  
+  connection.query('DELETE FROM komment where komment_id='+ req.body.bevitel1, function (err, rows, fields) {
+    if (err) throw err
+  
+    console.log(rows)
+    
+    res.send(rows)
+  })
+  
+  connection.end()
+  })
+  
 
   app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`)
