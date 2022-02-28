@@ -145,7 +145,29 @@ connection.end()
 
 connection.connect()
 
-connection.query('SELECT * from sorozat INNER JOIN mufaj ON sorozat.sorozat_mufaj=mufaj.mufaj_id  WHERE sorozat.sorozat_id ='+req.body.bevitel3, function (err, rows, fields) {
+connection.query('SELECT * from sorozat INNER JOIN mufaj ON sorozat.sorozat_mufaj=mufaj.mufaj_id WHERE sorozat.sorozat_id ='+req.body.bevitel3, function (err, rows, fields) {
+  if (err) throw err
+
+  console.log(rows)
+  res.send(rows)
+})
+
+connection.end()
+    
+  })
+
+  app.post('/filmsajatadatok', (req, res) => {
+    var mysql = require('mysql')
+    var connection = mysql.createConnection({
+    host: 'localhost',
+    user: 'root',
+    password: '',
+    database: 'vizsgamunka'
+})
+
+connection.connect()
+
+connection.query('SELECT * from filmek INNER JOIN film_mufajok ON filmek.film_mufaj=film_mufajok.mufaj_id WHERE filmek.film_id ='+req.body.bevitel3, function (err, rows, fields) {
   if (err) throw err
 
   console.log(rows)
