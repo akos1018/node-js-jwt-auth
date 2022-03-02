@@ -42,7 +42,7 @@ connection.end()
     
   })
 
-  app.get('/sorozatnezetsseg', (req, res) => {
+  app.get('/sorozatnezettseg', (req, res) => {
     var mysql = require('mysql')
     var connection = mysql.createConnection({
     host: 'localhost',
@@ -54,6 +54,28 @@ connection.end()
 connection.connect()
 
 connection.query('SELECT * from sorozat INNER JOIN mufaj ON sorozat.sorozat_mufaj=mufaj.mufaj_id ORDER BY sorozat.sorozat_kattintas DESC', function (err, rows, fields) {
+  if (err) throw err
+
+  console.log(rows)
+  res.send(rows)
+})
+
+connection.end()
+    
+  })
+
+  app.get('/filmnezettseg', (req, res) => {
+    var mysql = require('mysql')
+    var connection = mysql.createConnection({
+    host: 'localhost',
+    user: 'root',
+    password: '',
+    database: 'vizsgamunka'
+})
+
+connection.connect()
+
+connection.query('SELECT * from filmek ORDER BY filmek.film_kattintas DESC', function (err, rows, fields) {
   if (err) throw err
 
   console.log(rows)
@@ -99,7 +121,7 @@ connection.end()
 
 connection.connect()
 
-connection.query('SELECT * from mufaj ', function (err, rows, fields) {
+connection.query('SELECT * from mufaj  ', function (err, rows, fields) {
   if (err) throw err
 
   console.log(rows)
@@ -809,7 +831,7 @@ connection.end()
   
   
   
-  connection.query( "INSERT INTO sorozat VALUES (NULL, '"+req.body.bevitel1+"', '"+req.body.bevitel2+"', '"+req.body.bevitel3+"', '"+req.body.bevitel4+"', '"+req.body.bevitel5+"', '"+req.body.bevitel6+"', '"+req.body.bevitel7+"', '"+req.body.bevitel8+"','"+req.body.bevitel15+"',0);",function (err, rows, fields) {
+  connection.query( "INSERT INTO sorozat VALUES (NULL, '"+req.body.bevitel1+"', '"+req.body.bevitel2+"', '"+req.body.bevitel3+"', '"+req.body.bevitel4+"', '"+req.body.bevitel5+"', '"+req.body.bevitel6+"', '"+req.body.bevitel7+"', '"+req.body.bevitel8+"','"+req.body.bevitel15+"',0,0,0);",function (err, rows, fields) {
     if (err) throw err
   
     res.send("Sikerült")
@@ -832,7 +854,7 @@ connection.end()
   
   
   
-  connection.query( "INSERT INTO filmek VALUES (NULL, '"+req.body.bevitel9+"', '"+req.body.bevitel10+"', '"+req.body.bevitel11+"', '"+req.body.bevitel12+"', '"+req.body.bevitel13+"', '"+req.body.bevitel14+"');",function (err, rows, fields) {
+  connection.query( "INSERT INTO filmek VALUES (NULL, '"+req.body.bevitel9+"', '"+req.body.bevitel10+"', '"+req.body.bevitel11+"', '"+req.body.bevitel12+"', '"+req.body.bevitel13+"', '"+req.body.bevitel14+"','"+req.body.bevitel17+"',0,0,0);",function (err, rows, fields) {
     if (err) throw err
   
     res.send("Sikerült")
@@ -886,6 +908,184 @@ connection.end()
   })
   
   connection.end()
+  })
+
+  app.post('/filmlike', (req, res) => {
+    var mysql = require('mysql')
+    var connection = mysql.createConnection({
+    host: 'localhost',
+    user: 'root',
+    password: '',
+    database: 'vizsgamunka'
+  })
+  
+  connection.connect()
+  
+  connection.query('SELECT film_like FROM filmek WHERE filmek.film_id='+ req.body.bevitel4, function (err, rows, fields) {
+    if (err) throw err
+  
+    console.log(rows)
+    
+    res.send(rows)
+  })
+  
+  connection.end()
+  })
+
+  app.post('/filmdislike', (req, res) => {
+    var mysql = require('mysql')
+    var connection = mysql.createConnection({
+    host: 'localhost',
+    user: 'root',
+    password: '',
+    database: 'vizsgamunka'
+  })
+  
+  connection.connect()
+  
+  connection.query('SELECT film_dislike FROM filmek WHERE filmek.film_id='+ req.body.bevitel4, function (err, rows, fields) {
+    if (err) throw err
+  
+    console.log(rows)
+    
+    res.send(rows)
+  })
+  
+  connection.end()
+  })
+
+  app.post('/filmlikefelvitel', (req, res) => {
+    var mysql = require('mysql')
+    var connection = mysql.createConnection({
+    host: 'localhost',
+    user: 'root',
+    password: '',
+    database: 'vizsgamunka'
+})
+
+connection.connect()
+
+
+connection.query( 'UPDATE filmek SET film_like = film_like+1 WHERE filmek.film_id='+req.body.bevitel4 ,function (err, rows, fields) {
+    if (err) throw err
+
+    res.send(rows)
+    console.log(rows)
+})
+
+connection.end()
+
+  })
+  app.post('/filmdislikefelvitel', (req, res) => {
+    var mysql = require('mysql')
+    var connection = mysql.createConnection({
+    host: 'localhost',
+    user: 'root',
+    password: '',
+    database: 'vizsgamunka'
+})
+
+connection.connect()
+
+
+connection.query( 'UPDATE filmek SET film_dislike = film_dislike+1 WHERE filmek.film_id='+req.body.bevitel5 ,function (err, rows, fields) {
+    if (err) throw err
+
+    res.send(rows)
+    console.log(rows)
+})
+
+connection.end()
+
+  })
+
+  app.post('/sorozatlike', (req, res) => {
+    var mysql = require('mysql')
+    var connection = mysql.createConnection({
+    host: 'localhost',
+    user: 'root',
+    password: '',
+    database: 'vizsgamunka'
+  })
+  
+  connection.connect()
+  
+  connection.query('SELECT sorozat_like FROM sorozat WHERE sorozat.sorozat_id='+ req.body.bevitel4, function (err, rows, fields) {
+    if (err) throw err
+  
+    console.log(rows)
+    
+    res.send(rows)
+  })
+  
+  connection.end()
+  })
+
+  app.post('/sorozatdislike', (req, res) => {
+    var mysql = require('mysql')
+    var connection = mysql.createConnection({
+    host: 'localhost',
+    user: 'root',
+    password: '',
+    database: 'vizsgamunka'
+  })
+  
+  connection.connect()
+  
+  connection.query('SELECT sorozat_dislike FROM sorozat WHERE sorozat.sorozat_id='+ req.body.bevitel4, function (err, rows, fields) {
+    if (err) throw err
+  
+    console.log(rows)
+    
+    res.send(rows)
+  })
+  
+  connection.end()
+  })
+
+  app.post('/sorozatlikefelvitel', (req, res) => {
+    var mysql = require('mysql')
+    var connection = mysql.createConnection({
+    host: 'localhost',
+    user: 'root',
+    password: '',
+    database: 'vizsgamunka'
+})
+
+connection.connect()
+
+
+connection.query( 'UPDATE sorozat SET sorozat_like = sorozat_like+1 WHERE sorozat.sorozat_id='+req.body.bevitel4 ,function (err, rows, fields) {
+    if (err) throw err
+
+    res.send(rows)
+    console.log(rows)
+})
+
+connection.end()
+
+  })
+  app.post('/sorozatdislikefelvitel', (req, res) => {
+    var mysql = require('mysql')
+    var connection = mysql.createConnection({
+    host: 'localhost',
+    user: 'root',
+    password: '',
+    database: 'vizsgamunka'
+})
+
+connection.connect()
+
+
+connection.query( 'UPDATE sorozat SET sorozat_dislike = sorozat_dislike+1 WHERE sorozat.sorozat_id='+req.body.bevitel5 ,function (err, rows, fields) {
+    if (err) throw err
+
+    res.send(rows)
+    console.log(rows)
+})
+
+connection.end()
+
   })
   
 
