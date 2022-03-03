@@ -762,6 +762,29 @@ connection.end()
   connection.end()
   })
 
+  app.post('/filmtorles', (req, res) => {
+    var mysql = require('mysql')
+    var connection = mysql.createConnection({
+    host: 'localhost',
+    user: 'root',
+    password: '',
+    database: 'vizsgamunka'
+  })
+  
+  connection.connect()
+  
+  connection.query('DELETE from filmek WHERE film_id='+req.body.bevitel1, function (err, rows, fields) {
+    if (err) throw err
+  
+    console.log("Siker")
+    
+    res.send("Siker")
+  })
+  
+  connection.end()
+  })
+
+
   app.post('/osszessorozatkomment', (req, res) => {
     var mysql = require('mysql')
     var connection = mysql.createConnection({
